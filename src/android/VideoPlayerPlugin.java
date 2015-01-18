@@ -26,9 +26,11 @@ public class VideoPlayerPlugin extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView)
     {
+        Log.v(LOG_TAG, "Initialize Plugin");
         super.initialize(cordova, webView);
 
         // Set the Activity.
+        Log.v(LOG_TAG, "Set activity");
         this.activity = (VideoPlayer) cordova.getActivity();
     }
 
@@ -37,15 +39,10 @@ public class VideoPlayerPlugin extends CordovaPlugin {
      * name of the delegated method and the "args" will contain any arguments passed from the
      * JavaScript method.
      */
-//
-//    public boolean executeTest(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException
-//    {
-//        return this.execute(action, args, callbackContext);
-//    }
-
 
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext, Activity myActivity, boolean isNative) throws JSONException
     {
+        Log.v(LOG_TAG, "Execute: " + action);
         this.callbackContext = callbackContext;
 
         Log.v(LOG_TAG, callbackContext.getCallbackId() + ": " + action);
