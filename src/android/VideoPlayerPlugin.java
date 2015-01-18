@@ -1,17 +1,16 @@
 package com.seventynineit.videoplayer;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import org.apache.cordova.CordovaResourceApi;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class VideoPlayerPlugin extends CordovaPlugin {
     private static final String LOG_TAG   = "VideoPlayerPlugin";
@@ -37,50 +36,33 @@ public class VideoPlayerPlugin extends CordovaPlugin {
      * name of the delegated method and the "args" will contain any arguments passed from the
      * JavaScript method.
      */
-//
-//    public boolean executeTest(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException
-//    {
-//        return this.execute(action, args, callbackContext);
-//    }
-
-
-    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext, Activity myActivity, boolean isNative) throws JSONException
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException
     {
         this.callbackContext = callbackContext;
 
-        Log.v(LOG_TAG, callbackContext.getCallbackId() + ": " + action);
+        Log.d(LOG_TAG, callbackContext.getCallbackId() + ": " + action);
 
-
-        //CordovaResourceApi resourceApi = webView.getResourceApi();
+        CordovaResourceApi resourceApi = webView.getResourceApi();
         String target = args.getString(0);
-        Log.v(LOG_TAG, action + ": " + target);
-        //final JSONObject options = args.getJSONObject(1);
-//
-//        String fileUriStr;
-//        try {
-//            Uri targetUri = resourceApi.remapUri(Uri.parse(target));
-//            fileUriStr = targetUri.toString();
-//        } catch (IllegalArgumentException e) {
-//            fileUriStr = target;
-//        }
+        final JSONObject options = args.getJSONObject(1);
 
-        //Log.v(LOG_TAG, target);
+        String fileUriStr;
+        try {
+            Uri targetUri = resourceApi.remapUri(Uri.parse(target));
+            fileUriStr = targetUri.toString();
+        } catch (IllegalArgumentException e) {
+            fileUriStr = target;
+        }
 
-        //final String path = stripFileProtocol(fileUriStr);
+        Log.v(LOG_TAG, fileUriStr);
+
+        final String path = stripFileProtocol(fileUriStr);
+
 
         if (action.equals("play"))
         {
-            if (isNative){
-                Intent myIntent = new Intent(myActivity, VideoPlayer.class);
-                myIntent.putExtra("videoSource", target); //Optional parameters
-                myActivity.startActivity(myIntent);
-            } else {
-                Context myContext=myActivity.getApplicationContext();
-                Intent intent=new Intent(myContext,VideoPlayer.class);
-                intent.putExtra("videoSource", target); //Optional parameters
-
-                myContext.startActivity(intent);
-            }
+            this.callNativeMethod(path);
         }
         else
         {
@@ -88,11 +70,6 @@ public class VideoPlayerPlugin extends CordovaPlugin {
         }
 
         return true;
-    }
-
-    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException
-    {
-        return execute(action, args, callbackContext, cordova.getActivity(), false);
     }
 
     private void callNativeMethod(String videoSource)
