@@ -24,7 +24,8 @@ public class VideoPlayer extends Activity
         super.onCreate(savedInstanceState);
 
         // Get the layout from video_main.xml
-        setContentView(R.layout.activity_video);
+        setContentView(getResources().getIdentifier("activity_video", "layout", getPackageName()));
+        //setContentView(R.layout.activity_video);
 
         String videoSource;
 
@@ -45,7 +46,8 @@ public class VideoPlayer extends Activity
         }
 
         // Find your VideoView in your video_main.xml layout
-        myVideoView = (VideoView) findViewById(R.id.video_view);
+        //myVideoView = (VideoView) findViewById(R.id.video_view);
+        myVideoView = (VideoView) findViewById(getResources().getIdentifier("video_view", "id", getPackageName()));
 
         // Create a progressbar
         try {
