@@ -21,26 +21,40 @@ public class VideoPlayer extends Activity
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate Video Player");
         super.onCreate(savedInstanceState);
 
+        Log.v(LOG_TAG, "setContentView");
         // Get the layout from video_main.xml
         setContentView(getResources().getIdentifier("activity_video", "layout", getPackageName()));
         //setContentView(R.layout.activity_video);
 
-        String videoSource;
+        String videoSource = "";
+        String loadingTitle = "";
+        String loadingBody = "";
 
+        Log.v(LOG_TAG, "getIntent().getExtras()");
         Bundle b = getIntent().getExtras();
         if (b!=null){
             videoSource = b.getString("videoSource");
-        } else {
-            videoSource = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+            loadingTitle = b.getString("loadingTitle");
+            loadingBody = b.getString("loadingBody");
         }
 
-        Loading();
-        Play(videoSource);
+        Log.v(LOG_TAG, "videoSource: " + videoSource);
+
+        if (videoSource!=null){
+            Loading(loadingTitle, loadingBody, false);
+            Play(videoSource);
+        } else {
+            loadingTitle = "No media";
+            loadingBody = "No media specified";
+            Loading(loadingTitle, loadingBody, true);
+        }
     }
 
     public void Play(String videoSource){
+        Log.v(LOG_TAG, "Playing...");
         if (mediaControls == null) {
             mediaControls = new MediaController(VideoPlayer.this);
         }
@@ -83,14 +97,15 @@ public class VideoPlayer extends Activity
         });
     }
 
-    public void Loading(){
+    public void Loading(String loadingTitle, String loadingBody, Boolean canCancel){
+        Log.v(LOG_TAG, "Loading...");
         progressDialog = new ProgressDialog(VideoPlayer.this);
         // Set progressbar title
-        progressDialog.setTitle("Selectatrack On Demand");
+        progressDialog.setTitle(loadingTitle);
         // Set progressbar message
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage(loadingBody);
 
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(canCancel);
         // Show progressbar
         progressDialog.show();
     }
